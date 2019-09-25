@@ -1,6 +1,7 @@
 package com.nickgonzalezs.todolist.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.nickgonzalezs.todolist.PokeActivity;
 import com.nickgonzalezs.todolist.R;
 import com.nickgonzalezs.todolist.model.Pokemon;
 
 import java.util.ArrayList;
 
-public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> {
+public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> implements ItemClickListener {
 
     private Context context;
     private ArrayList<Pokemon> pokemons;
@@ -36,7 +39,7 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> {
     @Override
     public PokeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.poke_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, this);
     }
 
     @Override
@@ -63,17 +66,58 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onClick(View view, int position) {
+        Intent i = new Intent(context, PokeActivity.class);
+
+        Pokemon pokemon = pokemons.get(position);
+        i.putExtra(context.getString(R.string.pokemon_aidi), pokemon.getAidi());
+
+        context.startActivity(i);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView pokeImg;
         private TextView pokeName;
 
-        public ViewHolder(@NonNull View itemView) {
+        private ItemClickListener listener;
+
+
+        public ViewHolder(@NonNull View itemView, ItemClickListener listener) {
             super(itemView);
+
+            this.listener = listener;
 
             pokeImg = itemView.findViewById(R.id.poke_img);
             pokeName = itemView.findViewById(R.id.poke_name);
 
+            pokeImg.setOnClickListener(this);
+            pokeName.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onClick(v, getLayoutPosition());
         }
     }
 }
+
+interface ItemClickListener {
+    void onClick(View view, int position);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

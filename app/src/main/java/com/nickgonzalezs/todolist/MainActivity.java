@@ -3,6 +3,7 @@ package com.nickgonzalezs.todolist;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private PokeAdapter pokeAdapter;
 
+    int limit = 21;
+    int offset = 0;
+    boolean canLoad = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,37 +52,69 @@ public class MainActivity extends AppCompatActivity {
 
         rvPokemons.setHasFixedSize(true);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvPokemons.setLayoutManager(gridLayoutManager);
 
-        getPokemons();
+        rvPokemons.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                Log.i(TAG, "onScrolled: " + dy);
+
+                if (dy > 0) {
+
+
+                    int visibleCount = gridLayoutManager.getChildCount();
+                    int pastVisibleCount = gridLayoutManager.findFirstVisibleItemPosition();
+                    int totalItems = gridLayoutManager.getItemCount();
+
+                    Log.i(TAG, "onScrolled: " + visibleCount);
+                    Log.i(TAG, "onScrolled: " + totalItems);
+                    Log.i(TAG, "onScrolled: " + pastVisibleCount);
+                    if (canLoad) {
+                        if ((visibleCount + pastVisibleCount) >= totalItems) {
+                            offset += limit;
+                            getPokemons(offset);
+                        }
+                    }
+
+                }
+            }
+        });
+
+        getPokemons(offset);
     }
 
-    private void getPokemons(){
+    private void getPokemons(int offset) {
+
+        canLoad = false;
 
         PokeService service = retrofit.create(PokeService.class);
         Call<PokeResponse> pokeResponseCall =
-                service.getPokemons(0, 20);
+                service.getPokemons(offset, limit);
 
         pokeResponseCall.enqueue(new Callback<PokeResponse>() {
             @Override
             public void onResponse(Call<PokeResponse> call, Response<PokeResponse> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     PokeResponse pokeResponse = response.body();
 
                     ArrayList<Pokemon> pokemons = pokeResponse.getResults();
                     //Log.i(TAG,pokemons.toString());
                     pokeAdapter.addPokemons(pokemons);
+                    canLoad = true;
 
-                } else{
+                } else {
                     Log.i(TAG, "Error: " + response.errorBody());
+                    canLoad = true;
                 }
             }
 
             @Override
             public void onFailure(Call<PokeResponse> call, Throwable t) {
-
+                canLoad = true;
             }
         });
 
