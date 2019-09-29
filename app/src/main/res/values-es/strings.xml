@@ -3,4 +3,5 @@
 <resources>
     <string name="app_name">TodoList En espanol</string>
     <string name="pokemon_aidi">pokemon_aidi</string>
+    <string name="pokemon_name">pokemon_name</string>
 </resources>

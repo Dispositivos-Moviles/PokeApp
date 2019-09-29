@@ -72,6 +72,7 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> im
 
         Pokemon pokemon = pokemons.get(position);
         i.putExtra(context.getString(R.string.pokemon_aidi), pokemon.getAidi());
+        i.putExtra(context.getString(R.string.pokemon_name), pokemon.getName());
 
         context.startActivity(i);
     }
