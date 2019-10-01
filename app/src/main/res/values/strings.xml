@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TodoList</string>
-    <string name="poke_id_argument">aidi</string>
+    <string name="pokemon_aidi">pokemon_aidi</string>
+    <string name="pokemon_name">pokemon_name</string>
+
+    <string name="title_activity_qrreader">QRReaderActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

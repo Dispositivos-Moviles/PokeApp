@@ -1,89 +1,58 @@
 package com.nickgonzalezs.todolist;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
 import com.nickgonzalezs.todolist.model.PokeResponse;
-import com.nickgonzalezs.todolist.model.Pokemon;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.http.HEAD;
 
 public class PokeActivity extends AppCompatActivity {
 
-    private final String TAG = getClass().getSimpleName();
-    private Retrofit retrofit;
-    private int aidi;
+    private static final String TAG = "PokeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poke);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://pokeapi.co/api/v2/")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Intent intent = getIntent();
 
-        Intent i = getIntent();
-
-        if (i != null) {
-
-            int aidi = i.getIntExtra(getString(R.string.poke_id_argument), 0);
+        if (intent != null) {
+            int aidi = intent.getIntExtra(getString(R.string.pokemon_aidi), 0);
+            String name = intent.getStringExtra(getString(R.string.pokemon_name));
 
             if (aidi > 0) {
-                getPokeInfo(aidi);
-            } else {
-                i = new Intent(this, MainActivity.class);
-                startActivity(i);
-                finish();
-            }
 
-        } else {
-            i = new Intent(this, MainActivity.class);
-            startActivity(i);
-            finish();
+                toolbar.setTitle(name.toUpperCase());
+
+                setSupportActionBar(toolbar);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+                getPokemon(aidi);
+            }
         }
+
     }
 
-    private void getPokeInfo(int aidi) {
-        PokeService service = retrofit.create(PokeService.class);
-        Call<PokeResponse> pokeResponseCall = service.getPokemon(aidi);
-
-        pokeResponseCall.enqueue(new Callback<PokeResponse>() {
-            @Override
-            public void onResponse(Call<PokeResponse> call, Response<PokeResponse> response) {
-
-                Log.i(TAG, String.valueOf(call.request().url()));
-
-                if (response.isSuccessful()) {
-
-                    PokeResponse pokeResponse = response.body();
-
-                    Log.i(TAG, "onResponse: " + pokeResponse);
-
-
-                } else {
-                    Log.i(TAG, "Error: " + response.errorBody());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PokeResponse> call, Throwable t) {
-
-            }
-        });
+    private void getPokemon(int aidi) {
+        Glide.with(this)
+                .load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + aidi + ".png")
+                .into((ImageView) findViewById(R.id.poke_img));
     }
 }

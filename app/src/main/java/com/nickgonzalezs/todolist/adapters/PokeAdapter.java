@@ -1,8 +1,8 @@
 package com.nickgonzalezs.todolist.adapters;
 
+
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -69,14 +68,13 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> im
     }
 
     @Override
-    public void onClick(View itemView, int position) {
-        Log.i(TAG, "onClick: " + position);
-        Log.i(TAG, "onClick: " + pokemons.get(position).toString());
-        Log.i(TAG, "onClick AIDI: " + pokemons.get(position).getAidi());
 
+    public void onClick(View view, int position) {
         Intent i = new Intent(context, PokeActivity.class);
 
-        i.putExtra(context.getString(R.string.poke_id_argument), pokemons.get(position).getAidi());
+        Pokemon pokemon = pokemons.get(position);
+        i.putExtra(context.getString(R.string.pokemon_aidi), pokemon.getAidi());
+        i.putExtra(context.getString(R.string.pokemon_name), pokemon.getName());
 
         context.startActivity(i);
     }
@@ -90,11 +88,14 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> im
         public ViewHolder(@NonNull View itemView, ItemClickListener listener) {
             super(itemView);
 
+            this.listener = listener;
+
             pokeImg = itemView.findViewById(R.id.poke_img);
             pokeName = itemView.findViewById(R.id.poke_name);
             this.listener = listener;
 
             pokeImg.setOnClickListener(this);
+            pokeName.setOnClickListener(this);
 
         }
 
@@ -106,5 +107,6 @@ public class PokeAdapter extends RecyclerView.Adapter<PokeAdapter.ViewHolder> im
 }
 
 interface ItemClickListener {
-    void onClick(View itemView, int position);
+    void onClick(View view, int position);
 }
+
