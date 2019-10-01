@@ -1,7 +1,10 @@
 package com.nickgonzalezs.todolist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,6 +87,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         getPokemons(offset);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.qr_reader:
+                readQR();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    private void readQR() {
+        Intent i = new Intent(this, QRReaderActivity.class);
+        startActivity(i);
     }
 
     private void getPokemons(int offset) {

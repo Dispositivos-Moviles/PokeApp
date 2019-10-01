@@ -18,14 +18,19 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PokeActivity"
+        <activity
+            android:name=".PokeActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
 
+        <activity android:name=".QRReaderActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
 </manifest>
