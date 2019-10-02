@@ -1,12 +1,15 @@
 package com.nickgonzalezs.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -78,12 +81,32 @@ public class QRReaderActivity extends AppCompatActivity implements Detector.Proc
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                initCamera();
+            }
+        }
+    }
+
+    @Override
     public void release() {
 
     }
 
     @Override
     public void receiveDetections(Detector.Detections<Barcode> detections) {
+        SparseArray<Barcode> barcodes = detections.getDetectedItems();
+        if (barcodes.size() > 0) {
+            String qrcode = barcodes.valueAt(0).rawValue;
+            Log.i(TAG, "receiveDetections: " + qrcode);
 
+            Intent i = new Intent(this, MainActivity.class);
+            i.putExtra(this.getString(R.string.qrcode), qrcode);
+            setResult(RESULT_OK, i);
+            finish();
+        }
     }
 }

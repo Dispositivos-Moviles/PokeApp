@@ -2,11 +2,13 @@ package com.nickgonzalezs.todolist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +30,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
 
+    private static final int QR_READ = 2345;
     private final String TAG = getClass().getName();
     private Retrofit retrofit;
     private PokeAdapter pokeAdapter;
@@ -109,7 +112,42 @@ public class MainActivity extends AppCompatActivity {
 
     private void readQR() {
         Intent i = new Intent(this, QRReaderActivity.class);
-        startActivity(i);
+        startActivityForResult(i, QR_READ);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == QR_READ){
+            if(resultCode == RESULT_OK){
+
+                getPokemonInfo(data.getStringExtra(getString(R.string.qrcode)));
+
+            } else if(resultCode == RESULT_CANCELED){
+
+            }
+        }
+    }
+
+    private void getPokemonInfo(String qrcode) {
+
+        String qrdecoded = new String(Base64.decode(qrcode, Base64.NO_WRAP));
+        Log.i(TAG, "getPokemonInfo: "  + qrdecoded);
+
+        String[] pokedata = qrdecoded.split(";");
+
+        if(pokedata.length  == 2 ){
+            String name = pokedata[0];
+            int id = Integer.parseInt(pokedata[1]);
+
+            Intent i = new Intent(this, PokeActivity.class);
+
+            i.putExtra(this.getString(R.string.pokemon_aidi), id);
+            i.putExtra(this.getString(R.string.pokemon_name), name);
+
+            startActivity(i);
+        }
     }
 
     private void getPokemons(int offset) {
