@@ -1,6 +1,6 @@
 package com.nickgonzalezs.todolist.model;
 
-class Abilities {
+public class Abilities {
 
     private Ability ability;
     private boolean is_hidden;

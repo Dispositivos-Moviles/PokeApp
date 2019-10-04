@@ -1,6 +1,6 @@
 package com.nickgonzalezs.todolist.model;
 
-class Ability {
+public class Ability {
     private String name;
     private String url;
 

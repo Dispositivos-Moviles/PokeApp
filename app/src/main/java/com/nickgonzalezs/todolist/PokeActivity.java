@@ -11,10 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nickgonzalezs.todolist.model.Abilities;
+import com.nickgonzalezs.todolist.model.Ability;
 import com.nickgonzalezs.todolist.model.PokeResponse;
 import com.nickgonzalezs.todolist.model.PokeSingleResponse;
 
 import java.lang.ref.Reference;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +30,7 @@ public class PokeActivity extends AppCompatActivity {
 
     private static final String TAG = "PokeActivity";
     private Retrofit retrofit;
+    private LinearLayout llAbilities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class PokeActivity extends AppCompatActivity {
                         .addConverterFactory(ScalarsConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
+
+                llAbilities = findViewById(R.id.ll_abilities);
 
                 final Toolbar toolbar = findViewById(R.id.toolbar);
                 toolbar.setTitle(name);
@@ -74,7 +80,15 @@ public class PokeActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     PokeSingleResponse singlePokemonResponse = response.body();
 
-                    Log.i(TAG, "onResponse: " + singlePokemonResponse.toString());
+                    ArrayList<Abilities> abilities = singlePokemonResponse.getAbilities();
+
+                    for(Abilities ability : abilities ){
+                        Ability abilityL = ability.getAbility();
+
+                        Log.i(TAG, "for: " + abilityL.getName());
+                    }
+
+                    //Log.i(TAG, "onResponse: " + singlePokemonResponse.getAbilities().toString());
 
                 }else{
                     Log.i(TAG, "Error: " + response.errorBody());
