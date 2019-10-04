@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
         rvPokemons.setHasFixedSize(true);
 
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+
+//        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
         rvPokemons.setLayoutManager(gridLayoutManager);
 
         rvPokemons.addOnScrollListener(new RecyclerView.OnScrollListener() {
